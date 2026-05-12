@@ -6,11 +6,12 @@ from langchain.messages import HumanMessage, SystemMessage
 from llm_service.models import BaseContext, BaseModelResponseFormat
 from langchain.agents.middleware import AgentMiddleware
 from langchain.agents.structured_output import ProviderStrategy
+from langchain_openrouter import ChatOpenRouter
+import os
 
 class OpenRouterLLM(LLMABC):
-    def __init__(self, model_name):
-        self.model_name = model_name
-        self.model: BaseChatModel = init_chat_model(model_name)
+    def __init__(self, model_name: str):
+        self.model: BaseChatModel = ChatOpenRouter(model=model_name, api_key=os.getenv("OPENROUTER_API_KEY"))
     
     async def ask(self, 
                   human_prompt: HumanMessage, 
@@ -19,15 +20,15 @@ class OpenRouterLLM(LLMABC):
                   middlewares: list[AgentMiddleware] = [], 
                   context: BaseContext | None = None,
                   name: str = 'OpenRouterAgent'
-                  ):
+                  ) -> BaseModelResponseFormat:
         self.agent = create_agent(
             model = self.model, 
             tools=tools, 
             system_prompt=system_prompt, 
-            middlewares=middlewares, 
+            middleware=middlewares, 
             name=name, 
             context_schema=BaseContext,
             response_format=ProviderStrategy(BaseModelResponseFormat)
             )
-        result = self.agent.invoke({'messages': {'role': 'user', 'content': human_prompt }}, context=context)
-        return result
+        result = self.agent.invoke(human_prompt, context=context)
+        return result['structured_response']

@@ -3,9 +3,12 @@ from langchain.tools import BaseTool
 from langchain.messages import HumanMessage, SystemMessage
 from llm_service.models import BaseContext
 from langchain.agents.middleware import AgentMiddleware
+from llm_service.openrouter_llm import OpenRouterLLM
+import os
+
 class LLMService:
-    def __init__(self, llm: LLMABC):
-        self.llm = llm
+    def __init__(self, llm: LLMABC = None):
+        self.llm = llm or OpenRouterLLM(model_name=os.getenv("OPENROUTER_MODEL_NAME"))
     
     async def ask(self, 
                   human_prompt: HumanMessage, 
@@ -15,7 +18,7 @@ class LLMService:
                   context: BaseContext | None = None,
                   name: str = 'ResumeAgent'
                   ):
-        return await self.llm.ask(
+        result = await self.llm.ask(
             human_prompt=human_prompt, 
             system_prompt=system_prompt, 
             tools=tools, 
@@ -23,3 +26,4 @@ class LLMService:
             context=context, 
             name=name
         )
+        return result
