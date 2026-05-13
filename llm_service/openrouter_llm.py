@@ -15,20 +15,20 @@ class OpenRouterLLM(LLMABC):
     
     async def ask(self, 
                   human_prompt: HumanMessage, 
-                  system_prompt: SystemMessage = SystemMessage(content="You are a helpful assistant."),  
+                  system_prompt: SystemMessage = SystemMessage(content="You are a helpful assistant. You will respond to the user's query in a helpful and concise manner."),  
                   tools: list[BaseTool] = [], 
                   middlewares: list[AgentMiddleware] = [], 
                   context: BaseContext | None = None,
                   name: str = 'OpenRouterAgent'
-                  ) -> BaseModelResponseFormat:
-        self.agent = create_agent(
+                  ):
+        agent = create_agent(
             model = self.model, 
             tools=tools, 
             system_prompt=system_prompt, 
             middleware=middlewares, 
             name=name, 
-            context_schema=BaseContext,
-            response_format=ProviderStrategy(BaseModelResponseFormat)
+            context_schema=BaseContext
+            # response_format=ProviderStrategy(BaseModelResponseFormat)
             )
-        result = self.agent.invoke(human_prompt, context=context)
-        return result['structured_response']
+        response = await agent.ainvoke({'messages': [system_prompt, human_prompt]}, context=context)
+        return response['messages'][-1].content

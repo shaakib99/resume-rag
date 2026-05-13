@@ -7,7 +7,7 @@ chat_service = ChatService()
 
 @chat_router.post('')
 async def create(data: dict):
-    return await chat_service.create('Hello, how are you?')
+    return await chat_service.create(data)
 
 @chat_router.get('{id}')
 async def get_one(id: str):

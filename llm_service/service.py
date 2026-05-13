@@ -21,7 +21,7 @@ class LLMService:
         result = await self.llm.ask(
             human_prompt=human_prompt, 
             system_prompt=system_prompt, 
-            tools=tools, 
+            tools=tools,
             middlewares=middlewares, 
             context=context, 
             name=name
