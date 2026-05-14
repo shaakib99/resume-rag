@@ -21,13 +21,15 @@ class OpenRouterLLM(LLMABC):
                   context: BaseContext | None = None,
                   name: str = 'OpenRouterAgent'
                   ):
+        if context.context: system_prompt = SystemMessage(content=f"{system_prompt.content}\n\n{context.context}")
+        
         agent = create_agent(
             model = self.model, 
             tools=tools, 
             system_prompt=system_prompt, 
             middleware=middlewares, 
             name=name, 
-            context_schema=BaseContext
+            context_schema=BaseContext,
             # response_format=ProviderStrategy(BaseModelResponseFormat)
             )
         response = await agent.ainvoke({'messages': [system_prompt, human_prompt]}, context=context)
