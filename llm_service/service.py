@@ -1,3 +1,4 @@
+from typing import AsyncGenerator
 from llm_service.llm_abc import LLMABC
 from langchain.tools import BaseTool
 from langchain.messages import HumanMessage, SystemMessage
@@ -17,13 +18,13 @@ class LLMService:
                   middlewares: list[AgentMiddleware] = [], 
                   context: BaseContext | None = None,
                   name: str = 'ResumeAgent'
-                  ):
-        result = await self.llm.ask(
-            human_prompt=human_prompt, 
-            system_prompt=system_prompt, 
-            tools=tools,
-            middlewares=middlewares, 
-            context=context, 
-            name=name
-        )
-        return result
+                  ) -> AsyncGenerator[str, None, None]:
+        async for chunk in self.llm.ask(
+                human_prompt=human_prompt, 
+                system_prompt=system_prompt, 
+                tools=tools,
+                middlewares=middlewares, 
+                context=context, 
+                name=name
+            ):
+            yield chunk

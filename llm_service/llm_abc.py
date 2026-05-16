@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import AsyncGenerator
 from langchain.messages import SystemMessage, HumanMessage, ToolCall
 from langchain.tools import BaseTool
 from langchain.agents.middleware import AgentMiddleware
@@ -14,5 +15,5 @@ class LLMABC(ABC):
                   tools: list[BaseTool] = [], 
                   middlewares: list[AgentMiddleware] = [], 
                   context: BaseContext | None = None,
-                  name: str = 'ResumeAgent') -> BaseModelResponseFormat:
+                  name: str = 'ResumeAgent') -> AsyncGenerator[str, None, None]:
         pass
