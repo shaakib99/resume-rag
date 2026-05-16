@@ -2,7 +2,8 @@ from collections.abc import AsyncGenerator
 from langchain.messages import HumanMessage
 from llm_service.service import LLMService
 from tools.greeting import greet
-from tools.database import get_user_information, create_user_information, get_user, get_user_information_wrapper, tool_call_wrapper
+from llm_service.middlewares import get_user_information_wrapper, tool_call_wrapper
+from tools.database import get_user, get_user_information, create_user_information
 from llm_service.models import BaseContext
 
 class ChatService:

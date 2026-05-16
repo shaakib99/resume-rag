@@ -38,20 +38,3 @@ async def get_user(user_email: str) -> dict:
     # Simulate fetching user information from a database or external service
     user_info = next((user for user in users if user['email'] == user_email), None)
     return user_info
-
-@wrap_model_call
-async def get_user_information_wrapper(request: ModelRequest, handler: Callable[[ModelRequest], ModelResponse]) -> ModelResponse:
-    user_email = request.runtime.context.user_email
-    print(f"Middleware: Checking for user_email in context: {user_email}")
-    if not user_email:
-        existing_tools = [t for t in request.tools if t.name != "get_user_information"]
-        request = request.override(tools=[*existing_tools])
-    return await handler(request)
-    # return ToolMessage(content=response)
-
-@wrap_tool_call
-async def tool_call_wrapper(request: ModelRequest, handler: Callable[[ModelRequest], ModelResponse]) -> ModelResponse:
-    # print(f"Middleware: Tool call wrapper invoked for tool: {request.tool.name}")
-    response = await handler(request)
-    print(f"Middleware: Tool call wrapper received response: {response}")
-    return response
