@@ -4,12 +4,12 @@ from langchain.tools import BaseTool
 from langchain.messages import HumanMessage, SystemMessage
 from llm_service.models import BaseContext
 from langchain.agents.middleware import AgentMiddleware
-from llm_service.openrouter_llm import OpenRouterLLM
+from llm_service.openrouter_llm import OpenRouterLLMSingleton
 import os
 
 class LLMService:
     def __init__(self, llm: LLMABC = None):
-        self.llm = llm or OpenRouterLLM(model_name=os.getenv("OPENROUTER_MODEL_NAME"))
+        self.llm = llm or OpenRouterLLMSingleton.get_instance(model_name=os.getenv("OPENROUTER_MODEL_NAME"))
     
     async def ask(self, 
                   human_prompt: HumanMessage, 
@@ -25,6 +25,6 @@ class LLMService:
                 tools=tools,
                 middlewares=middlewares, 
                 context=context, 
-                name=name
+                name=name,
             ):
             yield chunk

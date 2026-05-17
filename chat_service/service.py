@@ -18,6 +18,7 @@ class ChatService:
         context = BaseContext(context=f'''
         This is the user information in database. Use this information to answer the user's query if needed. Do not use this information if it is not relevant to the user's query.
         Context: user email: {user_data['email']}''', user_email="wahidsakib@email.com")
+        context.thread_id = "chat_thread_3"  # Example thread ID, you can generate this dynamically as needed
 
         async for chunk in self.llm_service.ask(
             human_message, 
